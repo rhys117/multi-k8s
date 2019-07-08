@@ -1,0 +1,22 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t rhys/react-test -f ./client/Dockerfile.dev ./client
+
+scripts:
+  - docker run -e CI=true rhys/react-test npm test
+
+after_success:
+  - docker build -t rhys117/multi-client ./client
+  - docker build -t rhys117/multi-nginx ./nginx
+  - docker build -t rhys117/multi-server ./server
+  - docker build -t rhys117/multi-worker ./worker
+  # Login to docker CLI
+  - echo $DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take images and push to docker hub
+  - docker push rhys117/multi-client
+  - docker push rhys117/multi-nginx
+  - docker push rhys117/multi-server
+  - docker push rhys117/multi-worker
