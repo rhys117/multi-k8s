@@ -11,6 +11,16 @@ class Fib extends Component {
   componentDidMount() {
     this.fetchValues();
     this.fetchIndexes();
+
+    // Being lazy and polling every second for updates to avoid refreshing to see updates
+    this.timer = setInterval(() => {
+      this.fetchValues();
+      this.fetchIndexes();
+    }, 1000);
+  }
+
+  componentWillUnMount() {
+    this.timer = null;
   }
 
   async fetchValues() {
